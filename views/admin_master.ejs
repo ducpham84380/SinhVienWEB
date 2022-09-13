@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./css/style.css" />
+    <script src="./js/jquery.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <title>Admin</title>
+</head>
+<body>
+    <div class="header"> 
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <img src="./images/logo.png" alt="" width="50%" height="50%">
+                </div>
+                <div class="admin">
+                    ADMIN
+                </div>
+                <button class="logout">Đăng xuất</button>
+            </div>
+        </div>
+   </div>
+   <div class="aside">
+        <div class="menu">
+            <a href="./manageStudent">Quản lý sinh viên</a> 
+            <a href="./manageTeacher">Quản lý giảng viên</a>
+            <a href="./manageSubjects">Quản lý môn học</a>
+            <a href="./manageClass">Quản lý lớp</a>
+            <a href="./manageClassroom">Quản lý lớp học</a>
+            <a href="./manageNews">Quản lý bản tin</a>
+            <a href="./manageSpecialized">Quản lý khoa </a>
+            <a href="./Login">ok </a>
+        </div>
+   </div>
+   <div class="content">
+     <%- include(content) %>
+   </div>
+   
+</div>
+</body>
+</html>

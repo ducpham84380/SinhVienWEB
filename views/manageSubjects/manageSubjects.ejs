@@ -1,0 +1,136 @@
+<script>
+    $(document).ready(function(){
+
+        var url = "http://localhost:3000";
+
+        $.post(url + "/manageSubjects", function(data2){
+            $("#tbodyMH").html("");
+            if(data2.kq==1){
+                data2.SubjectsList.forEach(function(subjects){
+                    $("tbody").append(`<tr><td> `+subjects.MaMH+`</td> <td>`+subjects.NameMH+`</td> <td>`+subjects.ChinhChi+`</td> <td>`+subjects.Tuition+`</td> <td>`+subjects._id+`</td></tr>`);
+                });
+            }
+        });
+        
+        // them
+        $("#btn_Add_New_Subjects").click(function(){
+            if($("#maMH").val().length==0|| $("#nameMH").val().length==0|| $("#CC").val().length==0|| $("#hocphi").val().length==0){
+                alert("Vui lòng nhập đầy đủ thông tin");
+            }else{
+                $.post(url + "/manageSubjects/register", {
+                    MaMH:       $("#maMH").val(),
+                    NameMH:     $("#nameMH").val(),
+                    ChinhChi:   $("#CC").val(),
+                    Tuition:    $("#hocphi").val()
+                }, function(data){
+                    if(data.kq == 1 ){   
+                        $.post(url + "/manageSubjects", function(data2){
+                            $("#tbodyMH").html();
+                                if(data2.kq==1){
+                                        data2.SubjectsList.forEach(function(subjects){
+                                            $("tbody").append(`<tr><td> `+subjects.MaMH+`</td> <td>`+subjects.NameMH+`</td> <td>`+subjects.ChinhChi+`</td> <td>`+subjects.Tuition+`</td> <td>`+subjects._id+`</td></tr>`);
+                                    });
+                                }
+                        });
+                    }else{
+                        alert("Add Subject failed: " + data.errMsg);
+                    }
+                });
+            }
+        });
+
+        // chức năng chọn đối tượng
+        $("#list_mh tbody ").on("click", "tr", function(){
+            var currow = $(this).closest("tr");
+            var col1 = currow.find('td:eq(0)').text();
+            var col2 = currow.find('td:eq(1)').text();
+            var col3 = currow.find('td:eq(2)').text();
+            var col4 = currow.find('td:eq(3)').text();
+            var colID = currow.find('td:eq(4)').text();
+            $("#maMH").val(col1);
+            $("#nameMH").val(col2);
+            $("#CC").val(col3);
+            $("#hocphi").val(col4);
+            $("#id_mh").val(colID);
+        });
+        //update
+        $("#btn_Update_Subjects").click(function(){
+            if($("#maMH").val().length==0|| $("#nameMH").val().length==0|| $("#CC").val().length==0|| $("#hocphi").val().length==0){
+                alert("Vui lòng nhập đầy đủ thông tin");
+            }else{
+                $.post(url + "/manageSubjects/update", {
+                    id:$("#id_mh").val(),
+                    MaMH:       $("#maMH").val(),
+                    NameMH:     $("#nameMH").val(),
+                    ChinhChi:   $("#CC").val(),
+                    Tuition:    $("#hocphi").val()
+                }, function(data){
+                    if(data.kq == 1 ){   
+                        $.post(url + "/manageSubjects", function(data2){
+                            $("#tbodyMH").html("");
+                            if(data2.kq==1){
+                                data2.SubjectsList.forEach(function(subjects){
+                                    $("tbody").append(`<tr><td> `+subjects.MaMH+`</td> <td>`+subjects.NameMH+`</td> <td>`+subjects.ChinhChi+`</td> <td>`+subjects.Tuition+`</td> <td>`+subjects._id+`</td></tr>`);
+                                });
+                            }
+                        });
+                    }else{
+                        alert("Update Subject failed: " + data.errMsg);
+                    }
+                });
+            }
+        });
+
+        //xoa
+        $("#btn_Delete_Subjects").click(function(){
+            var chon = confirm("Bạn có muốn xoá ?");
+            if(chon){
+                $.post(url + "/manageSubjects/delete", {id:$("#id_mh").val()}, function(data){
+                    if(data.kq==1){
+                        $("#id_mh").val("");
+                        $("#maMH").val("");
+                        $("#nameMH").val("");
+                        $("#CC").val("");
+                        $("#hocphi").val("");
+                        $.post(url + "/manageSubjects", function(data2){
+                            $("#tbodyMH").html("");
+                            if(data2.kq==1){
+                                data2.SubjectsList.forEach(function(subjects){
+                                    $("tbody").append(`<tr><td> `+subjects.MaMH+`</td> <td>`+subjects.NameMH+`</td> <td>`+subjects.ChinhChi+`</td> <td>`+subjects.Tuition+`</td> <td>`+subjects._id+`</td></tr>`);
+                                });
+                            }
+                        });
+                    }else{
+                        alert("Delete Subject failed: " + data.errMsg);
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<h2>Quản Lý môn học</h2>
+<table id="list_mh" border="1">
+    <thead>
+        <tr>
+            <th scope="col">Mã môn học</th>
+            <th scope="col">Tên môn học"</th>
+            <th scope="col">Chính chỉ</th>
+            <th scope="col">Học phí</th>
+            <th scope="col">ID</th>
+        </tr>
+    </thead>
+    <tbody id="tbodyMH">
+        
+    </tbody>
+</table>
+<div id="form_AddNewSubjects">
+    <input type="text" id="maMH" placeholder="Mã môn học" /> <br/>
+    <input type="text" id="nameMH" placeholder="Tên môn học" /> <br/>
+    <input type="text" id="CC" placeholder="Chính chỉ" /> <br/>
+    <input type="text" id="hocphi" placeholder="Học phí" /> <br/>
+    <input type="button" id="btn_Add_New_Subjects" value="Thêm mới" />
+    <input type="button" id="btn_Update_Subjects" value="Cập nhập" />
+    <input type="button" id="btn_Delete_Subjects" value="Xoá" />
+    <input type="hidden" id="id_mh" />
+</div>

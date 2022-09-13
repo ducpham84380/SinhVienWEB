@@ -1,0 +1,107 @@
+
+.body{
+    font-family: sans-serif;
+    
+}
+.container{
+    padding-left: 25px;
+    padding-right: 25px;
+}
+.header{
+    width: 100%;
+    background: white;
+    border-radius: 16px;
+    border: 2px solid black;
+}
+    .header .row{
+        margin-top: 20px;
+    }
+.navbar{
+    display: flex;
+    align-items: center;
+    padding: 20px;
+}
+.admin{
+    margin-left: 325px;
+    font-size: 30px;
+    font-weight: 900;
+}
+.aside{
+    margin-top: 5px;
+    border: 2px solid black;
+    background-color: #F0E68C;
+    width: 14%; 
+    float: left;
+    height: auto;
+    border-radius: 16px;
+}
+.menu a:link, .menu a:visited{ 
+    margin-top: 25px;
+    height: 20px;
+    border-radius: 16px;
+    text-decoration: none;
+    display: block; padding: 10px ;
+    background-color: #F0E68C; 
+    color: black; 
+    font-weight: 900;
+    margin-bottom:2px;
+    text-align: center;
+    padding: 30px;
+}
+
+.menu a:hover{ 
+    background-color: #FF0000; 
+    color: FF4500; 
+}
+.logout{
+    width: 100px;
+    height: 30px;
+    margin-left: 400px;
+    text-align: center;
+    border: 2px solid black;
+    border-radius: 16px;
+    background-color: whitesmoke;
+}
+.content{
+    margin-top: 6px;
+    border: 2px solid black;
+    width: 85%; 
+    height: auto;
+    background-color: ghostwhite; 
+    min-height: 650px; 
+    float:right;
+    text-align: center;
+}
+input{
+    width: 250px;
+    height: 30px;
+    margin-top: 20px;
+    text-align: center;
+}
+ul{
+    height: auto;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+}
+
+table{
+    margin-top: 35px;
+    width: 100%;
+    height: auto;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    text-align: center;
+}
+table tr:hover{
+    background-color: #FF0000;
+}
+
+select{
+    width: 250px;
+    height: 30px;
+    margin-top: 20px;
+    text-align: center;
+}
+img{
+    margin-top: 25px;
+}

@@ -1,0 +1,112 @@
+
+<script>
+    $(document).ready(function(){
+    
+        var url = "http://localhost:3000";
+        
+        // hiển thỉ dữ liệu
+        $.post(url + "/manageSpecialized", function(data){
+            $("#list_Specialized").html("");
+            if(data.kq==1){
+                data.SpecializedList.forEach(function(specialized){
+                    $("#list_Specialized").append(`<li class="specialized"    idsp="`+specialized._id+`">`+specialized.NameSpecialized+`</li>`);
+                });
+           }
+        });
+    
+    
+       
+        // chức năng thêm đối tượng 
+        $("#btn_Add_New_Specialized").click(function(){
+            if($("#specializedName").val().length==0){
+                alert("Vui long nhap Name ");
+            }else{
+                $.post(url + "/manageSpecialized/AddNew", {
+                    NameSpecialized:$("#specializedName").val(),   
+                }, function(data){
+                    if(data.kq==1){
+
+                        $.post(url + "/manageSpecialized", function(data2){
+                            $("#list_Specialized").html("");
+                            if(data2.kq==1){
+                                data2.SpecializedList.forEach(function(specialized){
+                                    $("#list_Specialized").append(`<li class="specialized"    idsp="`+specialized._id+`">`+specialized.NameSpecialized+`</li>`);
+                                });
+                            }
+                        });
+
+                    }else{
+                        console.log("bad");
+                    }
+                });
+            }
+        });
+        
+        // chức năng chọn đối tượng
+        $(document).on("click", ".specialized", function(){
+            var Ten = $(this).html();
+            var Id_Sp = $(this).attr("idsp");
+            $("#specializedName_Update").val(Ten);
+            $("#hid_SpecializedID").val(Id_Sp);
+        });
+        
+        // Update 
+        $("#btn_Update_Specialized").click(function(){
+            $.post(url + "/manageSpecialized/update", {
+                id:$("#hid_SpecializedID").val(),
+                NameSpecialized:$("#specializedName_Update").val(),
+            }, function(data){
+                if(data.kq==1){
+                    $.post(url + "/manageSpecialized", function(data2){
+                        $("#list_Specialized").html("");
+                        if(data2.kq==1){
+                            data2.SpecializedList.forEach(function(specialized){
+                                $("#list_Specialized").append(`<li class="specialized"    idsp="`+specialized._id+`">`+specialized.NameSpecialized+`</li>`);
+                            });
+                        }
+                    });
+                }else{
+                    alert("Update specialized failed: " + data.errMsg);
+                }
+            });
+        });
+        
+        //xoá
+        $("#btn_Delete_Specialized").click(function(){
+            var chon = confirm("Are you sure you want to delete?");
+            if(chon){
+                $.post(url + "/manageSpecialized/delete", {id:$("#hid_SpecializedID").val()}, function(data){
+                    if(data.kq==1){
+                        $("#specializedName_Update").val("");
+                        $.post(url + "/manageSpecialized", function(data2){
+                            $("#list_Specialized").html("");
+                            if(data2.kq==1){
+                                data2.SpecializedList.forEach(function(specialized){
+                                    $("#list_Specialized").append(`<li class="specialized"    idsp="`+specialized._id+`">`+specialized.NameSpecialized+`</li>`);
+                                });
+                            }
+                        });
+                    }else{
+                        alert("Delete specialized failed: " + data.errMsg);
+                    }
+                });
+            }
+        });
+    
+    });
+    
+    </script>
+    <h2>Quản Lý Khoa</h2>
+    <div id="form_Specialized">
+        <input type="text" id="specializedName" placeholder="Nhập tên ngành" /> <br/>
+        <input type="button" id="btn_Add_New_Specialized" value="Add new" />
+    </div>
+    
+    <ul id="list_Specialized"></ul><br/>
+    
+    <div id="form_Specialized_Update">
+        <input type="hidden" id="hid_SpecializedID" /><br/>
+        <input type="text" id="specializedName_Update" placeholder="" /> <br/>
+        <input type="button" id="btn_Update_Specialized" value="Update" />
+        <input type="button" id="btn_Delete_Specialized" value="Delete" />
+    </div>

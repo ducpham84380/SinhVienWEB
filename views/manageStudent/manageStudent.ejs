@@ -1,0 +1,338 @@
+
+<script>
+    $(document).ready(function(){
+
+        var url = "http://localhost:3000";
+
+        $.post(url +"/manageStudent", function(data2){
+                $("#tbodySV").html("");
+                if(data2.kq==1){
+                        data2.StudentList.forEach(function(student){
+                        $("#tbodySV").append(`<tr><td> `+student.Mssv+`</td> <td>`+student.NameSV+`</td> <td>`+student.DateOfBirth+`</td> <td>`+student.Address+`</td> <td>`+student.PhoneNumber+`</td> <td>`+student.Email+`</td> <td>`+student.Class+`</td> <td>`+student.Specialized+`</td> <td>`+student.Avatar+`</td> <td>`+student._id+`</td> </tr>`);
+                    });
+                }    
+            $("#svSpecialized").html("");    
+            $.post(url + "/manageSpecialized", function(data){
+                if(data.kq==1){
+                    data.SpecializedList.forEach(function(specialized){
+                        var select = document.getElementById('svSpecialized'),
+                            newOp= document.createElement('option'),
+                            newOpSp=document.createTextNode(specialized.NameSpecialized);
+                        newOp.appendChild(newOpSp);
+                        select.insertBefore(newOp,select.lastChild);    
+                    });
+                }
+            });    
+        });
+       
+        
+
+        $("#hinhsv").change(function(){
+
+            var data = new FormData();
+
+            jQuery.each(jQuery('#hinhsv')[0].files, function(i, file) {
+                console.log('hinhdaidien');
+                data.append('hinhdaidien', file);
+            });
+
+            jQuery.ajax({
+                    url: url + "/uploadFile",
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    method: 'POST',
+                    type: 'POST', // For jQuery < 1.9
+                    success: function(data){
+                        if(data.kq == 1){
+                            $("#ImgAvataNew").attr("src", url+`/upload/`+data.file);
+                            $("#file_Imagesv").val(data.file);
+                        }else{
+                            console.log("Upload fail!");
+                        }
+                    }
+                });
+        });
+
+        $("#btn_Add_New_Student").click(function(){
+            if($("#file_Imagesv").val().length==0 || $("#svMssv").val().length==0|| $("#svName").val().length==0|| $("#svDate").val().length==0|| $("#svAddress").val().length==0||$("#svPhoneNumber").val().length==0||$("#svEmail").val().length==0||$("#svClass").val().length==0||$("#svSpecialized").val().length==0){
+                alert("Vui lòng nhập đầy đủ thông tin");
+            }else{
+                $.post(url + "/manageStudent/register", {
+                    Mssv:$("#svMssv").val(),
+                    Avatar:$("#file_Imagesv").val(),  
+                    NameSV: $("#svName").val(),
+                    DateOfBirth:$("#svDate").val(),
+                    Address:$("#svAddress").val(),
+                    PhoneNumber:$("#svPhoneNumber").val(),
+                    Email:$("#svEmail").val(),
+                    Class:$("#svClass").val(),
+                    Specialized:$("#svSpecialized").val()
+                }, function(data){
+                    if(data.kq == 1 ){   
+                        $.post(url + "/manageStudent", function(data2){
+                            $("#tbodySV").html();
+                                if(data2.kq==1){
+                                        data2.StudentList.forEach(function(student){
+                                            $("tbodySV").append(`<tr><td> `+student.Mssv+`</td> <td>`+student.NameSV+`</td> <td>`+student.DateOfBirth+`</td> <td>`+student.Address+`</td> <td>`+student.PhoneNumber+`</td> <td>`+student.Email+`</td> <td>`+student.Class+`</td> <td>`+student.Specialized+`</td> <td>`+student.Avatar+`</td> <td>`+student._id+`</td>  </tr>`);
+                                    });
+                                }
+                        });
+                    }else{
+                        alert("Add student failed: " + data.errMsg);
+                    }
+                });
+            }
+        });
+        
+        // chức năng chọn đối tượng
+        $("#list_sv tbody ").on("click", "tr", function(){
+            var currow = $(this).closest("tr");
+            var col1 = currow.find('td:eq(0)').text();
+            var col2 = currow.find('td:eq(1)').text();
+            var col3 = currow.find('td:eq(2)').text();
+            var col4 = currow.find('td:eq(3)').text();
+            var col5 = currow.find('td:eq(4)').text();
+            var col6 = currow.find('td:eq(5)').text();
+            var col7 = currow.find('td:eq(6)').text();
+            var col8 = currow.find('td:eq(7)').text();
+            var col9 = currow.find('td:eq(8)').text();
+            var colID = currow.find('td:eq(9)').text();
+            var date= new Date(col3);
+            $("#svMssv").val(col1);
+            $("#svName").val(col2);
+            $("#svDate").val(date);
+            $("#svAddress").val(col4);
+            $("#svPhoneNumber").val(col5);
+            $("#svEmail").val(col6);
+            $("#svClass").val(col7);
+            $("#svSpecialized").val(col8);
+            $("#file_Imagesv").val(col9);
+            $("#ImgAvataNew").attr("src",url+"/upload/"+col9);
+            $("#id_sv").val(colID);
+        });
+        
+        // update sv
+        $("#btn_Update_Student").click(function(){
+            if($("#file_Imagesv").val().length==0 || $("#svMssv").val().length==0|| $("#svName").val().length==0|| $("#svDate").val().length==0|| $("#svAddress").val().length==0||$("#svPhoneNumber").val().length==0||$("#svEmail").val().length==0||$("#svClass").val().length==0||$("#svSpecialized").val().length==0){
+                alert("Vui lòng nhập đầy đủ thông tin");
+            }else{
+                $.post(url + "/manageStudent/update", {
+                    id:$("#id_sv").val(),
+                    Mssv:$("#svMssv").val(),
+                    Avatar:$("#file_Imagesv").val(),  
+                    NameSV: $("#svName").val(),
+                    DateOfBirth:$("#svDate").val(),
+                    Address:$("#svAddress").val(),
+                    PhoneNumber:$("#svPhoneNumber").val(),
+                    Email:$("#svEmail").val(),
+                    Class:$("#svClass").val(),
+                    Specialized:$("#svSpecialized").val()
+                }, function(data){
+                    if(data.kq == 1 ){   
+                        $.post(url + "/manageStudent", function(data2){
+                            $("#tbodySV").html("");
+                                if(data2.kq==1){
+                                        data2.StudentList.forEach(function(student){
+                                            $("tbodySV").append(`<tr><td> `+student.Mssv+`</td> <td>`+student.NameSV+`</td> <td>`+student.DateOfBirth+`</td> <td>`+student.Address+`</td> <td>`+student.PhoneNumber+`</td> <td>`+student.Email+`</td> <td>`+student.Class+`</td> <td>`+student.Specialized+`</td> <td>`+student.Avatar+`</td> <td>`+student._id+`</td>  </tr>`);
+                                    });
+                            }
+                        });
+                    }else{
+                        alert("Update student failed: " + data.errMsg);
+                    }
+                });
+            }
+        });
+        
+        // xoa sinh vien
+        $("#btn_Delete_Student").click(function(){
+            var chon = confirm("Bạn có muốn xoá ?");
+            if(chon){
+                $.post(url + "/manageStudent/delete", {id:$("#id_sv").val()}, function(data){
+                    if(data.kq==1){
+                        $("#svMssv").val("");
+                        $("#svName").val("");
+                        $("#svDate").val("");
+                        $("#svAddress").val("");
+                        $("#svPhoneNumber").val("");
+                        $("#svEmail").val("");
+                        $("#svClass").val("");
+                        $("#svSpecialized").val("");
+                        $("#file_Imagesv").val("");
+                        $("#ImgAvataNew").attr("src","");
+                        $("#id_sv").val("");
+                        $.post(url + "/manageStudent", function(data2){
+                            $("#tbodySV").html("");
+                                if(data2.kq==1){
+                                        data2.StudentList.forEach(function(student){
+                                            $("tbodySV").append(`<tr><td> `+student.Mssv+`</td> <td>`+student.NameSV+`</td> <td>`+student.DateOfBirth+`</td> <td>`+student.Address+`</td> <td>`+student.PhoneNumber+`</td> <td>`+student.Email+`</td> <td>`+student.Class+`</td> <td>`+student.Specialized+`</td> <td>`+student.Avatar+`</td> <td>`+student._id+`</td>  </tr>`);
+                                    });
+                            }
+                        });
+                    }else{
+                        alert("Delete student failed: " + data.errMsg);
+                    }
+                });
+            }
+        });
+
+       
+        $("#excelSV").change(function(){
+            let upfile = event.target.files[0];
+            if(upfile){
+                let fileReader = new FileReader();
+                fileReader.readAsBinaryString(upfile);
+                fileReader.onload=(event)=>{
+                    let data = event.target.result;
+                     //doc file excel
+                    let ex =XLSX.read(data,{type:"binary",cellDates:true});
+                    ex.SheetNames.forEach(sheet => {
+                        let rowObject = XLSX.utils.sheet_to_row_object_array(ex.Sheets[sheet]);
+                        var dataload = JSON.stringify(rowObject,undefined)
+                        // load du lieu len table
+                        for (var i = 0; i < rowObject.length; i++){
+                            var row = `<tr>
+                                            <td>${rowObject[i].Mssv}</td>
+                                            <td>${rowObject[i].NameSV}</td>
+                                            <td>${rowObject[i].DateOfBirth}</td>
+                                            <td>${rowObject[i].Address}</td>
+                                            <td>${rowObject[i].PhoneNumber}</td>
+                                            <td>${rowObject[i].Email}</td>
+                                            <td>${rowObject[i].Class}</td>
+                                            <td>${rowObject[i].Specialized}</td>
+                                            <td>${rowObject[i].Avatar}</td>
+                                    </tr>`
+                             document.getElementById("list_svex").innerHTML += row
+                        }
+                    });
+                }
+            }
+           
+        });
+
+        // add bang file execl
+        $("#btn_Add_New_Studentex").click(function(){
+            var table = document.getElementById("list_svex").rows.length;
+            for(var i = 1; i < table; i++){
+                var mssv = document.getElementById("list_svex").rows[i].cells[0].innerHTML;
+                var hoten = document.getElementById("list_svex").rows[i].cells[1].innerHTML;
+                var ngaysinh = document.getElementById("list_svex").rows[i].cells[2].innerHTML;
+                var diachi = document.getElementById("list_svex").rows[i].cells[3].innerHTML;
+                var sdt = document.getElementById("list_svex").rows[i].cells[4].innerHTML;
+                var email = document.getElementById("list_svex").rows[i].cells[5].innerHTML;
+                var lophoc = document.getElementById("list_svex").rows[i].cells[6].innerHTML;
+                var khoa = document.getElementById("list_svex").rows[i].cells[7].innerHTML;
+                var hinh = document.getElementById("list_svex").rows[i].cells[8].innerHTML;
+                $("#mssv").val(mssv);
+                $("#name").val(hoten);
+                $("#date").val(ngaysinh);
+                $("#diachi").val(diachi);
+                $("#sdt").val(sdt);
+                $("#hinh").val(hinh);
+                $("#email").val(email);
+                $("#lop").val(lophoc);
+                $("#khoa").val(khoa);
+                if($("#mssv").val().length==0 || $("#name").val().length==0|| $("#date").val().length==0|| $("#diachi").val().length==0|| $("#sdt").val().length==0||$("#hinh").val().length==0||$("#email").val().length==0||$("#lop").val().length==0||$("#khoa").val().length==0){
+                alert("Vui lòng nhập đầy đủ thông tin");
+                }else{
+                    $.post(url + "/manageStudent/register", {
+                        Mssv:$("#mssv").val(),
+                        Avatar:$("#hinh").val(),  
+                        NameSV: $("#name").val(),
+                        DateOfBirth:$("#date").val(),
+                        Address:$("#diachi").val(),
+                        PhoneNumber:$("#sdt").val(),
+                        Email:$("#email").val(),
+                        Class:$("#lop").val(),
+                        Specialized:$("#khoa").val()
+                    }, function(data){
+                        if(data.kq == 1 ){   
+                            $.post(url + "/manageStudent", function(data2){
+                                $("#tbodySV").html();
+                                    if(data2.kq==1){
+                                            data2.StudentList.forEach(function(student){
+                                                $("tbodySV").append(`<tr><td> `+student.Mssv+`</td> <td>`+student.NameSV+`</td> <td>`+student.DateOfBirth+`</td> <td>`+student.Address+`</td> <td>`+student.PhoneNumber+`</td> <td>`+student.Email+`</td> <td>`+student.Class+`</td> <td>`+student.Specialized+`</td> <td>`+student.Avatar+`</td> <td>`+student._id+`</td>  </tr>`);
+                                        });
+                                    }
+                            });
+                        }else{
+                            alert("Add student failed: " + data.errMsg);
+                        }
+                    });
+                }
+            }
+            
+        });
+
+       
+    });
+</script>
+
+<h2>Quản Lý Sinh Viên</h2>
+<div id="form_AddNewStudentex">
+    <input type="file" id="excelSV"/> <br/>
+    <input type="button" id="btn_Add_New_Studentex" value="Thêm mới" />
+    <input type="hidden" id="mssv" />
+    <input type="hidden" id="name" />
+    <input type="hidden" id="date" />
+    <input type="hidden" id="diachi" />
+    <input type="hidden" id="sdt" />
+    <input type="hidden" id="hinh" />
+    <input type="hidden" id="email" />
+    <input type="hidden" id="lop" />
+    <input type="hidden" id="khoa" />
+</div>
+<table id="list_svex" border="1">
+    <thead>
+        <tr>
+            <th scope="col">Mã số sinh viên</th>
+            <th scope="col">Họ và tên</th>
+            <th scope="col">Ngày sinh</th>
+            <th scope="col">Địa chỉ</th>
+            <th scope="col">số điện thoại</th>
+            <th scope="col">Email</th>
+            <th scope="col">Lớp</th>
+            <th scope="col">Khoa</th>
+            <th scope="col">Hình</th>
+        </tr>
+    </thead>
+    <tbody id="tbodySVex">
+    </tbody>
+</table>
+<div id="form_AddNewStudent">
+    <img id="ImgAvataNew" width="100px" height="100px" /><br/>
+    <input type="file" id="hinhsv"/> <br/>
+    <input type="text" id="svMssv" placeholder="Mã số sinh viên" /> <br/>
+    <input type="text" id="svName" placeholder="Họ và tên" /> <br/>
+    <input type="text" id="svDate" placeholder="Chọn ngày" onfocus="(this.type='date')" onblur="if(!this.value) this.type='text'"/> <br/>
+    <input type="text" id="svAddress" placeholder="Địa chỉ" /> <br/>
+    <input type="text" id="svPhoneNumber" placeholder="số điện thoại" /> <br/>
+    <input type="text" id="svEmail" placeholder="Email" /> <br/>
+    <input type="text" id="svClass" placeholder="Lớp" /> <br/>
+    <select id="svSpecialized"> </select><br>
+    <input type="button" id="btn_Add_New_Student" value="Thêm mới" />
+    <input type="button" id="btn_Update_Student" value="Cập nhập" />
+    <input type="button" id="btn_Delete_Student" value="Xoá" />
+    <input type="hidden" id="file_Imagesv" />
+    <input type="hidden" id="id_sv" />
+</div>
+<table id="list_sv" border="1">
+    <thead>
+        <tr>
+            <th scope="col">Mã số sinh viên</th>
+            <th scope="col">Họ và tên</th>
+            <th scope="col">Ngày sinh</th>
+            <th scope="col">Địa chỉ</th>
+            <th scope="col">số điện thoại</th>
+            <th scope="col">Email</th>
+            <th scope="col">Lớp</th>
+            <th scope="col">Khoa</th>
+            <th scope="col">Hình</th>
+            <th scope="col">ID</th>
+        </tr>
+    </thead>
+    <tbody id="tbodySV">
+    </tbody>
+</table>

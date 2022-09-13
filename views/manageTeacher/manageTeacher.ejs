@@ -1,0 +1,216 @@
+
+<script>
+    $(document).ready(function(){
+
+        var url = "http://localhost:3000";
+
+        $.post(url +"/manageTeacher", function(data2){
+            //load bang 
+            $("#tbodyGV").html("");
+            if(data2.kq==1){
+                data2.TeacherList.forEach(function(teacher){
+                        $("tbody").append(`<tr><td> `+teacher.Msgv+`</td> <td>`+teacher.Namegv+`</td> <td>`+teacher.DateOfBirth+`</td> <td>`+teacher.Address+`</td> <td>`+teacher.PhoneNumber+`</td> <td>`+teacher.Email+`</td> <td>`+teacher.Specialized+`</td> <td>`+teacher.Avatar+`</td> <td>`+teacher._id+`</td> </tr>`);
+                    });
+                }      
+            //load list khoa
+            $("#gvSpecialized").html("");    
+            $.post(url + "/manageSpecialized", function(data){
+                if(data.kq==1){
+                    data.SpecializedList.forEach(function(specialized){
+                        var select = document.getElementById('gvSpecialized'),
+                            newOp= document.createElement('option'),
+                            newOpSp=document.createTextNode(specialized.NameSpecialized);
+                        newOp.appendChild(newOpSp);
+                        select.insertBefore(newOp,select.lastChild);    
+                    });
+                }
+            });    
+        });
+
+        //tai hinh anh
+        $("#hinhgv").change(function(){
+
+            var data = new FormData();
+
+                jQuery.each(jQuery('#hinhgv')[0].files, function(i, file) {
+                    console.log('hinhdaidien');
+                    data.append('hinhdaidien', file);
+                });
+
+                jQuery.ajax({
+                        url: url + "/uploadFile",
+                        data: data,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        method: 'POST',
+                        type: 'POST', // For jQuery < 1.9
+                        success: function(data){
+                            if(data.kq == 1){
+                                $("#ImgAvataNew").attr("src", url+`/upload/`+data.file);
+                                $("#file_Imagegv").val(data.file);
+                            }else{
+                                console.log("Upload fail!");
+                            }
+                        }
+                    });
+                });
+
+        $("#btn_Add_New_Teacher").click(function(){
+            if($("#file_Imagegv").val().length==0 || $("#gvMsgv").val().length==0|| $("#gvName").val().length==0|| $("#gvDate").val().length==0|| $("#gvAddress").val().length==0||$("#gvPhoneNumber").val().length==0||$("#gvEmail").val().length==0||$("#gvSpecialized").val().length==0){
+                alert("Vui lòng nhập đầy đủ thông tin");
+            }else{
+                $.post(url + "/manageTeacher/register", {
+                    Msgv:$("#gvMsgv").val(),
+                    Avatar:$("#file_Imagegv").val(),  
+                    Namegv: $("#gvMsgv").val(),
+                    DateOfBirth:$("#gvDate").val(),
+                    Address:$("#gvAddress").val(),
+                    PhoneNumber:$("#gvPhoneNumber").val(),
+                    Email:$("#gvEmail").val(),
+                    Specialized:$("#gvSpecialized").val()
+                }, function(data){
+                    if(data.kq == 1 ){   
+                        $.post(url +"/manageTeacher", function(data2){
+                            //load bang 
+                            $("#tbodyGV").html("");
+                            if(data2.kq==1){
+                                data2.TeacherList.forEach(function(teacher){
+                                        $("tbody").append(`<tr><td> `+teacher.Msgv+`</td> <td>`+teacher.Namegv+`</td> <td>`+teacher.DateOfBirth+`</td> <td>`+teacher.Address+`</td> <td>`+teacher.PhoneNumber+`</td> <td>`+teacher.Email+`</td> <td>`+teacher.Specialized+`</td> <td>`+teacher.Avatar+`</td> <td>`+teacher._id+`</td> </tr>`);
+                                });
+                            }         
+                        });
+                    }else{
+                        alert("Add teacher failed: " + data.errMsg);
+                    }
+                });
+            }
+        });
+        
+        // chon giang vien trong bang
+        $("#list_gv tbody ").on("click", "tr", function(){
+            var currow = $(this).closest("tr");
+            var col1 = currow.find('td:eq(0)').text();
+            var col2 = currow.find('td:eq(1)').text();
+            var col3 = currow.find('td:eq(2)').text();
+            var col4 = currow.find('td:eq(3)').text();
+            var col5 = currow.find('td:eq(4)').text();
+            var col6 = currow.find('td:eq(5)').text();
+            var col7 = currow.find('td:eq(6)').text();
+            var col8 = currow.find('td:eq(7)').text();
+            var colID = currow.find('td:eq(8)').text();
+            var date= new Date(col3);
+            $("#gvMsgv").val(col1);
+            $("#gvName").val(col2);
+            $("#gvDate").val(date);
+            $("#gvAddress").val(col4);
+            $("#gvPhoneNumber").val(col5);
+            $("#gvEmail").val(col6);
+            $("#gvSpecialized").val(col7);
+            $("#file_Imagegv").val(col8);
+            $("#ImgAvataNew").attr("src",url+"/upload/"+col8);
+            $("#id_gv").val(colID);
+        });
+
+        //update 
+        $("#btn_Update_Teacher").click(function(){
+            if($("#file_Imagegv").val().length==0 || $("#gvMsgv").val().length==0|| $("#gvName").val().length==0|| $("#gvDate").val().length==0|| $("#gvAddress").val().length==0||$("#gvPhoneNumber").val().length==0||$("#gvEmail").val().length==0||$("#gvSpecialized").val().length==0){
+                alert("Vui lòng nhập đầy đủ thông tin");
+            }else{
+                $.post(url + "/manageTeacher/update", {
+                    id:$("#id_gv").val(),
+                    Mssv:$("#gvMsgv").val(),
+                    Avatar:$("#file_Imagesgv").val(),  
+                    NameSV: $("#gvName").val(),
+                    DateOfBirth:$("#gvDate").val(),
+                    Address:$("#gvAddress").val(),
+                    PhoneNumber:$("#gvPhoneNumber").val(),
+                    Email:$("#gvEmail").val(),
+                    Specialized:$("#gvSpecialized").val()
+                }, function(data){
+                    if(data.kq == 1 ){   
+                        $.post(url +"/manageTeacher", function(data2){
+                            //load bang 
+                            $("#tbodyGV").html("");
+                            if(data2.kq==1){
+                                data2.TeacherList.forEach(function(teacher){
+                                        $("tbody").append(`<tr><td> `+teacher.Msgv+`</td> <td>`+teacher.Namegv+`</td> <td>`+teacher.DateOfBirth+`</td> <td>`+teacher.Address+`</td> <td>`+teacher.PhoneNumber+`</td> <td>`+teacher.Email+`</td> <td>`+teacher.Specialized+`</td> <td>`+teacher.Avatar+`</td> <td>`+teacher._id+`</td> </tr>`);
+                                });
+                            }         
+                        });
+                    }else{
+                        alert("Update teacher failed: " + data.errMsg);
+                    }
+                });
+            }
+        });
+
+        $("#btn_Delete_Teacher").click(function(){
+            var chon = confirm("Bạn có muốn xoá ?");
+            if(chon){
+                $.post(url + "/manageTeacher/delete", {id:$("#id_gv").val()}, function(data){
+                    if(data.kq==1){
+                        $("#gvMsgv").val("");
+                        $("#gvName").val("");
+                        $("#gvDate").val("");
+                        $("#gvAddress").val("");
+                        $("#gvPhoneNumber").val("");
+                        $("#gvEmail").val("");
+                        $("#gvClass").val("");
+                        $("#gvSpecialized").val("");
+                        $("#file_Imagegv").val("");
+                        $("#ImgAvataNew").attr("src","");
+                        $("#id_gv").val("");
+                        $.post(url +"/manageTeacher", function(data2){
+                            //load bang 
+                            $("#tbodyGV").html("");
+                            if(data2.kq==1){
+                                data2.TeacherList.forEach(function(teacher){
+                                        $("tbody").append(`<tr><td> `+teacher.Msgv+`</td> <td>`+teacher.Namegv+`</td> <td>`+teacher.DateOfBirth+`</td> <td>`+teacher.Address+`</td> <td>`+teacher.PhoneNumber+`</td> <td>`+teacher.Email+`</td> <td>`+teacher.Specialized+`</td> <td>`+teacher.Avatar+`</td> <td>`+teacher._id+`</td> </tr>`);
+                                });
+                            }         
+                        });
+                    }else{
+                        alert("Delete teacher failed: " + data.errMsg);
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<h2>Quản lý giảng viên</h2>
+<div id="form_AddNewStudent">
+    <img id="ImgAvataNew" width="100px" height="100px" /><br/>
+    <input type="file" id="hinhgv"/> <br/>
+    <input type="text" id="gvMsgv" placeholder="Mã số giảng viên" /> <br/>
+    <input type="text" id="gvName" placeholder="Họ và tên" /> <br/>
+    <input type="text" id="gvDate" placeholder="Chọn ngày" onfocus="(this.type='date')" onblur="if(!this.value) this.type='text'"/> <br/>
+    <input type="text" id="gvAddress" placeholder="Địa chỉ" /> <br/>
+    <input type="text" id="gvPhoneNumber" placeholder="số điện thoại" /> <br/>
+    <input type="text" id="gvEmail" placeholder="Email" /> <br/>
+    <select id="gvSpecialized"><option></option></select><br>
+    <input type="button" id="btn_Add_New_Teacher" value="Thêm mới" />
+    <input type="button" id="btn_Update_Teacher" value="Cập nhập" />
+    <input type="button" id="btn_Delete_Teacher" value="Xoá" />
+    <input type="hidden" id="file_Imagegv" />
+    <input type="hidden" id="id_gv" />
+</div>
+<table id="list_gv" border="1">
+    <thead>
+        <tr>
+            <th scope="col">Mã số giảng viên</th>
+            <th scope="col">Họ và tên</th>
+            <th scope="col">Ngày sinh</th>
+            <th scope="col">Địa chỉ</th>
+            <th scope="col">số điện thoại</th>
+            <th scope="col">Email</th>
+            <th scope="col">Khoa</th>
+            <th scope="col">Hình</th>
+            <th scope="col">ID</th>
+        </tr>
+    </thead>
+    <tbody id="tbodyGV">
+        
+    </tbody>
+</table>
